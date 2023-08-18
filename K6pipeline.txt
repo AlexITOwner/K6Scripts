@@ -1,0 +1,118 @@
+
+pipeline {
+    agent any
+    
+     parameters {
+        string(name: 'vus', defaultValue: '1')
+        string(name: 'Duration', defaultValue: '300s')
+    }
+    
+    options { disableConcurrentBuilds()}
+    
+    stages {
+        stage('K6 Script token login') {
+            steps {
+                bat 'k6 login cloud --token 1fd2afe4f23f482f3e89d2c0630b2eb2f2e379c0a4bb0e08a5697406f5507e81'
+           }
+       }
+        
+       stage('Run K6 Script') {
+            steps {
+                //bat 'k6 run --vus=${params.vus} --duration=${params.Duration} C:/Users/K6scripts/K6scriptGenID.js'
+                bat 'k6 run C:/Users/K6scripts/K6scriptGenID.js --out cloud'
+                
+                publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild:
+                false, includes: '**/*', keepAll: true, reportDir: 'C:\\Users\\K6scripts\\K6reports', 
+                reportFiles: 'K6index.html', reportName: 'Pipeline HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+           }
+       }
+    }
+    post{
+        always{
+            echo 'Build is assembled'
+        }
+         success{
+            echo 'Build is assembled successfully'
+        }
+        unstable{
+            echo 'Build is unstable'
+        }
+        failure{
+            echo 'Build is failure!'
+         }
+    }
+}
+
+********************************************************
+pipeline {
+    agent any
+    
+     parameters {
+        string(name: 'vus', defaultValue: '3')
+        string(name: 'Duration', defaultValue: '300s')
+    }
+    
+    options { disableConcurrentBuilds()}
+    
+    stages {
+        stage('K6 Script token login') {
+            steps {
+                bat 'k6 login cloud --token 1fd2afe4f23f482f3e89d2c0630b2eb2f2e379c0a4bb0e08a5697406f5507e81'
+           }
+       }
+        
+       stage('Run K6 Script') {
+            steps {
+                bat "k6 run C:/Users/K6scripts/K6scriptWork.js --out cloud --env VUS=${params.vus} --env DURATION=${params.Duration}"
+                //bat 'k6 run C:/Users/K6scripts/K6scriptWork.js --out cloud'
+                
+               // publishHTML(target: [allowMissing: false, alwaysLinkToLastBuild:
+              //  false, includes: '**/*', keepAll: true, reportDir: 'C:\\Users\\K6scripts\\K6reports', 
+              //  reportFiles: 'K6index.html', reportName: 'Pipeline HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+           }
+       }
+    }
+    post{
+        always{
+            echo 'Build is assembled'
+        }
+         success{
+            echo 'Build is assembled successfully'
+        }
+        unstable{
+            echo 'Build is unstable'
+        }
+        failure{
+            echo 'Build is failure!'
+         }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
